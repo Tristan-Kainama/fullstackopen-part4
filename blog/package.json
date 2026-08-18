@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js Samuel2709",
     "dev": "node --watch index.js Samuel2709",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "author": "Tristan Kainama",
   "license": "ISC",
