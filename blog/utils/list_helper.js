@@ -54,11 +54,27 @@ const mostBlogs = (blogs) => {
 
         return authorWithMostBlogs
     }
+}  
+
+const mostLikes = (blogs) => {
+    if (blogs.length == 0) {
+        return 'There are no blogs found'
+    }
+    else if (blogs.length == 1) {
+        const blogWithMostLikes = _.pick(blogs[0], ['author', 'likes'])
+        return blogWithMostLikes
+    } 
+    else {
+        const blogWithHighestLikes = blogs.reduce((max, obj) => obj.likes > max.likes ? obj : max, blogs[0]);
+        const blogWithMostLikes = _.pick(blogWithHighestLikes, ['author', 'likes'])
+        return blogWithMostLikes
+    }
 }
 
 module.exports = {
     dummy,
     totalLikes,
     favoriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
 }
