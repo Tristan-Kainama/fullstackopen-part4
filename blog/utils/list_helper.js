@@ -14,7 +14,22 @@ const totalLikes = (blogs) => {
     }
 }
 
+const favoriteBlog = (blogs) => {
+    if (blogs.length == 0) {
+        return 'There are no blogs found'
+    }
+    else if (blogs.length == 1) {
+        const blogWithHighestLikes = blogs[0]
+        return blogWithHighestLikes
+    }
+    else {
+        const blogWithHighestLikes = blogs.reduce((max, obj) => obj.likes > max.likes ? obj : max, blogs[0]);
+        return blogWithHighestLikes
+    }
+}
+
 module.exports = {
     dummy,
-    totalLikes
+    totalLikes,
+    favoriteBlog
 }
