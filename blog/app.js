@@ -3,20 +3,13 @@ const mongoose = require('mongoose')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
-const blogsRouter = require('./controller/notes')
+const blogsRouter = require('./controller/blogs')
 
 const app = express()
 
 app.use(express.json())
 
 logger.info('Connecting to', config.MONGODB_URI)
-
-if (process.argv.length < 3) {
-  console.log('give password as argument')
-  process.exit(1)
-}
-
-const password = process.argv[2]
 
 mongoose.connect(config.MONGODB_URI, { family: 4 })
 .then(() => {
