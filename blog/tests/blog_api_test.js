@@ -40,6 +40,12 @@ test('all blogs are returned', async () => {
     assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
+test("_id property is change to id", async () => {
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(Object.hasOwn(response.body[0], "id"), true)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
