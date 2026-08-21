@@ -17,15 +17,15 @@ beforeEach(async () => {
 })
 
 test('all blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const blogsAtStart = await helper.blogsInDb()
 
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    assert.strictEqual(blogsAtStart.length, helper.initialBlogs.length)
 })
 
 test("_id property is change to id", async () => {
-    const response = await api.get('/api/blogs')
+    const blogsAtStart = await helper.blogsInDb()
 
-    assert.strictEqual(Object.hasOwn(response.body[0], "id"), true)
+    assert.strictEqual(Object.hasOwn(blogsAtStart[0], "id"), true)
 })
 
 test('a valid blog can be added', async () => {
@@ -44,13 +44,25 @@ test('a valid blog can be added', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-    
-
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
     const urls = blogsAtEnd.map(r => r.url)
     assert(urls.includes('http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll'))
+})
+
+test('has no likes property or not', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToView = blogsAtStart[0]
+
+    const resultBlog = await api
+    .get(`/api/blogs/${blogToView.id}`)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+    const likesBlog = resultBlog.body.likes ?? 0
+
+    assert.strictEqual(likesBlog, 7)
 })
 
 after(async () => {
