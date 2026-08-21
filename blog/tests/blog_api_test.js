@@ -65,6 +65,23 @@ test('has no likes property or not', async () => {
     assert.strictEqual(likesBlog, 7)
 })
 
+test('returns error when trying to add new blog with no author and url', async () => {
+    const newBlog = {
+        _id: "5a422b891b54a676234d17fa",
+        title: "First class tests",
+        likes: 10,
+        __v: 0
+    }
+
+    await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+})
+
 after(async () => {
     await mongoose.connection.close()
 })
