@@ -110,6 +110,62 @@ describe('when there is initially some blogs saved inside', () => {
             .expect(400)
         })
     })
+
+    describe('update single blog', () => {
+        test('update sucessful', async () => {
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+
+            const updatedBlog = {
+                title: "First class tests",
+                author: "Robert C. Martin",
+                url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+                likes: 10,
+                id: blogToUpdate.id
+            }
+            
+            await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(updatedBlog)
+            .expect(200)
+            
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.deepStrictEqual(blogsAtEnd[0], updatedBlog)
+        })
+
+        test('error when send is empty', async () => {
+            await api
+            .put('/api/blogs/5a422aa71b54a676234d17f9')
+            .send({})
+            .expect(404)
+        })
+
+        test('still works if missing a properties', async () => {
+            const blogsAtStart = await helper.blogsInDb()
+            const blogToUpdate = blogsAtStart[0]
+
+            const updatedBlogToSend = {
+                author: "Robert C. Martin",
+                url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll"
+            }
+
+            const updatedBlog = {
+                            id: "5a422a851b54a676234d17f7",
+                            title: "React patterns",
+                            author: "Robert C. Martin",
+                            url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+                            likes: 7
+                        }
+
+            await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(updatedBlogToSend)
+            .expect(200)
+
+            const blogsAtEnd = await helper.blogsInDb()
+            assert.deepStrictEqual(blogsAtEnd[0], updatedBlog)
+        })
+    })
 })
 
 after(async () => {
