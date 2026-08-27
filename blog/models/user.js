@@ -24,7 +24,6 @@ userSchema.set('toJSON', {
 
         // The password hash should not be revealed
         delete returnedObject.passwordHash
-        delete returnedObject.blogs
     }
 })
 

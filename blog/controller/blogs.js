@@ -1,8 +1,9 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', {username: 1, name: 1})
   response.json(blogs)
 })
 
@@ -16,15 +17,35 @@ blogsRouter.get('/:id', async (request, response) => {
 })
 
 blogsRouter.post('/', async (request, response) => {
-  const blog = new Blog(request.body)
 
-  if (Object.hasOwn(request.body, 'author') && Object.hasOwn(request.body, 'url')) {
-    const savedBlog = await blog.save() 
-    response.status(201).json(savedBlog) 
+  let user = await User.findById(request.body.userId)
+
+  if (!user) {
+    const users = await User.find({})
+    if (!users) {
+      return response.status(400).json({ error: 'there are no users' })
+    }
+
+    user = await User.findOne()
   }
-  else {
-    response.status(400).end()
+
+  const blog = new Blog({
+    title: request.body.title,
+    author: request.body.author,
+    url: request.body.url,
+    likes: request.body.likes,
+    user: user._id
+  })
+
+  if (!request.body.title || !request.body.url) {
+    return response.status(400).json({ error: 'title and url are required' })
   }
+
+  const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
+
+  response.status(201).json(savedBlog) 
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
